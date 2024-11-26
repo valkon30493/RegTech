@@ -1,6 +1,10 @@
 import pandas as pd
 import pyodbc
 from datetime import datetime
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
 # Step 1: Load and Process the Data
 try:
@@ -10,7 +14,8 @@ try:
     )
     # Drop the first row
     df.drop(0, axis=0, inplace=True)
-    # Insert column "ReportDate" using the current date
+
+    # Insert "ReportDate" as first column
     df.insert(0, 'ReportDate', datetime.now().strftime('%Y-%m-%d'))
     print(f"Data loaded and processed. Total rows: {df.shape[0]}")
 except Exception as e:
@@ -26,6 +31,7 @@ try:
         'Trusted_Connection=yes;'
     )
     cursor = conn.cursor()
+    cursor.fast_executemany = True
 
     # Insert data into SQL Server
     for index, row in df.iterrows():
