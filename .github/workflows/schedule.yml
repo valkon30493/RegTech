@@ -4,6 +4,8 @@ on:
   schedule:
     # Runs at 11 a.m. UTC (6 a.m. ET) Monday to Friday
     - cron: '0 11 * * 1-5'
+  workflow_dispatch:  # Add this to enable manual trigger
+
 
 jobs:
   run-finra-script:
@@ -24,8 +26,3 @@ jobs:
 
     - name: Run Script
       run: python upload_finra_data.py
-      env:
-        DB_SERVER: ${{ secrets.DB_SERVER }}
-        DB_DATABASE: ${{ secrets.DB_DATABASE }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
