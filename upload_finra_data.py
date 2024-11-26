@@ -20,7 +20,7 @@ except Exception as e:
 # Step 2: Upload Data to SQL Server
 try:
     conn = pyodbc.connect(
-        'DRIVER={SQL Server};'
+        'DRIVER={ODBC Driver 18 for SQL Server};'
         'SERVER=AZR-WE-BI-02;'
         'DATABASE=RTS;'
         'Trusted_Connection=yes;'
