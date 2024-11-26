@@ -1,0 +1,31 @@
+name: Run FINRA Data Upload Script on Business Days
+
+on:
+  schedule:
+    # Runs at 11 a.m. UTC (6 a.m. ET) Monday to Friday
+    - cron: '0 11 * * 1-5'
+
+jobs:
+  run-finra-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Script
+      run: python upload_finra_data.py
+      env:
+        DB_SERVER: ${{ secrets.DB_SERVER }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
