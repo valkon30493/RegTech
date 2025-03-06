@@ -1,0 +1,20 @@
+items for grooming:
+STOP previous schedule for EMIR TR parsing:
+https://etoro-jira.atlassian.net/browse/DSR-6638
+
+REGIS EOD reports parsing:
+Create generic import: https://etoro-jira.atlassian.net/browse/DSR-7144 - not fully groomed yet (sprint 197, 7 SPs)
+Create generic pipeline for parsing: https://etoro-jira.atlassian.net/browse/DSR-7147
+Import data to datalake: https://etoro-jira.atlassian.net/browse/DSR-7150
+
+
+DTCC EOD reports parsing:
+Create generic import: https://etoro-jira.atlassian.net/browse/DSR-7244
+Create generic pipeline for parsing: https://etoro-jira.atlassian.net/browse/DSR-7247
+Import data to datalake: https://etoro-jira.atlassian.net/browse/DSR-7252
+
+TRAX NPD files - NationalID is populated as NULL instead of populating the CONCAT field for clients from countries with first priority CONCAT:
+https://etoro-jira.atlassian.net/browse/DSR-6892
+
+CAT reporting mismatch:
+https://etoro-jira.atlassian.net/browse/DSR-7872

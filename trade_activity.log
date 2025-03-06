@@ -1,0 +1,90 @@
+2025-01-31 17:28:18,581 - INFO - XML is valid.
+2025-01-31 17:28:19,561 - INFO - Database connection closed.
+2025-01-31 17:31:27,509 - INFO - XML is valid.
+2025-01-31 17:31:43,712 - INFO - \u2705 Data successfully inserted into the database.
+2025-01-31 17:31:43,836 - INFO - \u2705 Database connection closed.
+2025-02-04 12:12:18,093 - INFO - XML is valid.
+2025-02-04 12:12:19,497 - INFO - Database connection closed.
+2025-02-04 12:15:50,684 - INFO - XML is valid.
+2025-02-04 12:15:51,940 - INFO - Database connection closed.
+2025-02-04 12:17:12,737 - INFO - XML is valid.
+2025-02-04 12:17:13,813 - ERROR - \u274c Error inserting data: ('The SQL contains 23 parameter markers, but 22 parameters were supplied', 'HY000')
+2025-02-04 12:17:13,968 - INFO - \u2705 Database connection closed.
+2025-02-04 12:17:46,947 - INFO - XML is valid.
+2025-02-04 12:17:48,153 - ERROR - \u274c Error inserting data: ('The SQL contains 23 parameter markers, but 22 parameters were supplied', 'HY000')
+2025-02-04 12:17:48,314 - INFO - \u2705 Database connection closed.
+2025-02-04 12:17:59,678 - INFO - XML is valid.
+2025-02-04 12:18:22,010 - INFO - \u2705 Data successfully inserted into the database.
+2025-02-04 12:18:22,171 - INFO - \u2705 Database connection closed.
+2025-02-04 12:19:24,979 - INFO - XML is valid.
+2025-02-04 12:19:26,377 - ERROR - \u274c Error inserting data: ('The SQL contains 23 parameter markers, but 22 parameters were supplied', 'HY000')
+2025-02-04 12:19:26,534 - INFO - \u2705 Database connection closed.
+2025-02-04 12:22:37,500 - INFO - XML is valid.
+2025-02-04 12:22:38,568 - ERROR - \u274c Error inserting data: ('The SQL contains 23 parameter markers, but 22 parameters were supplied', 'HY000')
+2025-02-04 12:22:38,723 - INFO - \u2705 Database connection closed.
+2025-02-04 12:23:48,760 - INFO - XML is valid.
+2025-02-04 12:23:49,949 - ERROR - \u274c Error inserting data: ('The SQL contains 23 parameter markers, but 22 parameters were supplied', 'HY000')
+2025-02-04 12:23:50,108 - INFO - \u2705 Database connection closed.
+2025-02-04 12:28:13,224 - INFO - XML is valid.
+2025-02-04 12:28:14,454 - ERROR - \u274c Error inserting data: ('22018', "[22018] [Microsoft][ODBC SQL Server Driver][SQL Server]Conversion failed when converting the nvarchar value 'QZR8QTXPNLMD' to data type bit. (245) (SQLExecDirectW)")
+2025-02-04 12:28:14,611 - INFO - \u2705 Database connection closed.
+2025-02-04 12:28:58,447 - INFO - XML is valid.
+2025-02-04 12:28:59,853 - ERROR - \u274c Error inserting data: ('22018', "[22018] [Microsoft][ODBC SQL Server Driver][SQL Server]Conversion failed when converting the nvarchar value 'QZR8QTXPNLMD' to data type bit. (245) (SQLExecDirectW)")
+2025-02-04 12:29:00,019 - INFO - \u2705 Database connection closed.
+2025-02-04 12:38:47,362 - INFO - XML is valid.
+2025-02-04 12:38:48,962 - ERROR - \u274c Error inserting data: ('The SQL contains 23 parameter markers, but 22 parameters were supplied', 'HY000')
+2025-02-04 12:38:49,168 - INFO - \u2705 Database connection closed.
+2025-02-04 12:44:11,447 - INFO - XML is valid.
+2025-02-04 12:44:12,683 - ERROR - \u274c Error inserting data: ('The SQL contains 23 parameter markers, but 22 parameters were supplied', 'HY000')
+2025-02-04 12:44:12,839 - INFO - \u2705 Database connection closed.
+2025-02-04 12:45:21,559 - INFO - XML is valid.
+2025-02-04 12:45:22,634 - ERROR - \u274c Error inserting data: ('The SQL contains 23 parameter markers, but 22 parameters were supplied', 'HY000')
+2025-02-04 12:45:22,792 - INFO - \u2705 Database connection closed.
+2025-02-04 12:46:43,880 - INFO - XML is valid.
+2025-02-04 12:47:06,782 - INFO - \u2705 Data successfully inserted into the database.
+2025-02-04 12:47:06,944 - INFO - \u2705 Database connection closed.
+2025-02-04 13:07:52,948 - INFO - XML is valid.
+2025-02-04 13:08:24,992 - INFO - \u2705 Data successfully inserted into the database.
+2025-02-04 13:08:25,152 - INFO - \u2705 Database connection closed.
+2025-02-04 13:13:38,593 - INFO - XML is valid.
+2025-02-04 13:14:10,366 - INFO - \u2705 Data successfully inserted into the database.
+2025-02-04 13:14:10,518 - INFO - \u2705 Database connection closed.
+2025-02-04 13:17:23,225 - INFO - XML is valid.
+2025-02-04 13:17:54,397 - INFO - \u2705 Data successfully inserted into the database.
+2025-02-04 13:17:54,554 - INFO - \u2705 Database connection closed.
+2025-02-04 13:26:20,325 - INFO - XML is valid.
+2025-02-04 13:26:21,736 - ERROR - \u274c Error inserting data: ('42S02', "[42S02] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid object name 'UnavistaIG_Trade_Activity_Report'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC SQL Server Driver][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-02-04 13:26:21,889 - INFO - \u2705 Database connection closed.
+2025-02-04 13:27:15,530 - INFO - XML is valid.
+2025-02-04 13:27:46,842 - INFO - \u2705 Data successfully inserted into the database.
+2025-02-04 13:27:47,001 - INFO - \u2705 Database connection closed.
+2025-02-04 13:31:03,530 - INFO - XML is valid.
+2025-02-04 13:31:04,652 - ERROR - \u274c Error inserting data: ('The SQL contains 40 parameter markers, but 41 parameters were supplied', 'HY000')
+2025-02-04 13:31:04,810 - INFO - \u2705 Database connection closed.
+2025-02-04 13:31:25,343 - INFO - XML is valid.
+2025-02-04 13:31:56,235 - INFO - \u2705 Data successfully inserted into the database.
+2025-02-04 13:31:56,394 - INFO - \u2705 Database connection closed.
+2025-02-06 07:14:21,276 - INFO - XML is valid.
+2025-02-06 07:14:23,959 - ERROR - \u274c Error inserting data: ('42000', "[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]String or binary data would be truncated in table 'RTS.dbo.UnavistaMarex_Trade_Activity_Report', column 'UnderlyingInstrumentIndexName'. Truncated value: 'Dow Jones In'. (2628) (SQLExecDirectW); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]The statement has been terminated. (3621)")
+2025-02-06 07:14:24,220 - INFO - \u2705 Database connection closed.
+2025-02-06 07:17:24,041 - INFO - XML is valid.
+2025-02-06 07:17:26,894 - ERROR - \u274c Error inserting data: ('42000', "[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]String or binary data would be truncated in table 'RTS.dbo.UnavistaMarex_Trade_Activity_Report', column 'UnderlyingInstrumentIndexName'. Truncated value: 'Dow Jones In'. (2628) (SQLExecDirectW); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]The statement has been terminated. (3621)")
+2025-02-06 07:17:27,132 - INFO - \u2705 Database connection closed.
+2025-02-06 07:28:08,254 - INFO - XML is valid.
+2025-02-06 07:28:11,286 - ERROR - \u274c Error inserting data: ('42S02', "[42S02] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid object name 'UnavistaMarex_Trade_Activity_Report'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC SQL Server Driver][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-02-06 07:28:11,454 - INFO - \u2705 Database connection closed.
+2025-02-06 07:29:57,160 - INFO - XML is valid.
+2025-02-06 07:29:59,916 - ERROR - \u274c Error inserting data: ('42000', "[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]String or binary data would be truncated in table 'RTS.dbo.UnavistaMarex_Trade_Activity_Report', column 'UnderlyingInstrumentIndexName'. Truncated value: 'Dow Jones In'. (2628) (SQLExecDirectW); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]The statement has been terminated. (3621)")
+2025-02-06 07:30:00,190 - INFO - \u2705 Database connection closed.
+2025-02-06 07:37:33,842 - INFO - XML is valid.
+2025-02-06 07:37:36,598 - ERROR - \u274c Error inserting data: ('42000', "[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]String or binary data would be truncated in table 'RTS.dbo.UnavistaMarex_Trade_Activity_Report', column 'UnderlyingInstrumentIndexName'. Truncated value: 'Dow Jones In'. (2628) (SQLExecDirectW); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]The statement has been terminated. (3621)")
+2025-02-06 07:37:36,855 - INFO - \u2705 Database connection closed.
+2025-02-06 07:40:47,361 - INFO - XML is valid.
+2025-02-06 07:41:19,634 - INFO - \u2705 Data successfully inserted into the database.
+2025-02-06 07:41:19,791 - INFO - \u2705 Database connection closed.
+2025-02-06 10:55:50,585 - INFO - XML is valid.
+2025-02-06 10:55:53,930 - ERROR - \u274c Error inserting data: ('42000', "[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]String or binary data would be truncated in table 'RTS.dbo.UnavistaMarex_Trade_Activity_Report', column 'UnderlyingInstrumentIndexName'. Truncated value: 'Dow Jones In'. (2628) (SQLExecDirectW); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]The statement has been terminated. (3621)")
+2025-02-06 10:55:54,182 - INFO - \u2705 Database connection closed.
+2025-02-06 15:32:16,750 - INFO - XML is valid.
+2025-02-06 15:32:20,480 - ERROR - \u274c Error inserting data: ('42000', "[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]String or binary data would be truncated in table 'RTS.dbo.UnavistaMarex_Trade_Activity_Report', column 'UnderlyingInstrumentIndexName'. Truncated value: 'Dow Jones In'. (2628) (SQLExecDirectW); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]The statement has been terminated. (3621)")
+2025-02-06 15:32:20,716 - INFO - \u2705 Database connection closed.
