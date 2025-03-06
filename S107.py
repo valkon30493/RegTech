@@ -1,0 +1,199 @@
+import pyodbc
+from lxml import etree
+import re
+from datetime import datetime, timedelta
+
+
+
+# Paths to your files
+XML_FILE = 'C:/Users/valentinosko/Desktop/REGIS_EOD_Reports/Trade_State_Report/eudbp6tyb000_S107_20250121000000_TSR_0005.xml'
+XSD_FILE = 'C:/Users/valentinosko/Desktop/REGIS_EOD_Reports/Trade_State_Report/head.003.001.01.xsd'
+
+# Filename example
+file_name = "eudbp6tyb000_S107_20250121000000_TSR_0005"
+
+# Adjusted regex to capture 'YYYYMMDD' part from '20250121000000'
+match = re.search(r'_S107_(\d{8})', file_name)
+
+# Convert to date if match is found
+report_date = datetime.strptime(match.group(1), "%Y%m%d").date() if match else None
+report_date_str = report_date.isoformat() if report_date else ""
+
+
+
+# SQL Server connection details
+CONNECTION_STRING = (
+    'DRIVER={SQL Server};'
+    'SERVER=AZR-WE-BI-02;'
+    'DATABASE=RTS;'
+    'Trusted_Connection=yes;'
+)
+
+# Define namespaces
+NAMESPACES = {
+    'auth': 'urn:iso:std:iso:20022:tech:xsd:auth.107.001.01',
+}
+
+def validate_xml(xml_file, xsd_file):
+    """Validate XML file against the XSD schema."""
+    try:
+        with open(xsd_file, 'rb') as f:
+            schema_root = etree.XML(f.read())
+        schema = etree.XMLSchema(schema_root)
+        parser = etree.XMLParser(schema=schema)
+        etree.parse(xml_file, parser)
+        print("XML is valid.")
+    except etree.XMLSchemaError as e:
+        raise ValueError(f"XML schema validation error: {e}")
+
+def get_text(element):
+    """Safely extract text from an XML element."""
+    return element.text if element is not None else None
+
+def extract_data(xml_file):
+    """Parse XML and extract relevant data."""
+    tree = etree.parse(xml_file)
+    root = tree.getroot()
+
+    stat_elements = root.findall('.//auth:Stat', NAMESPACES)
+    for stat in stat_elements:
+        data = {
+            # Counterparty-Specific Data
+            'ReportDate': report_date_str,
+            'ReportingCounterparty_LEI': get_text(stat.find('.//auth:RptgCtrPty/auth:Id/auth:Lgl/auth:Id/auth:LEI', NAMESPACES)),
+            'ReportingCounterparty_Sector': get_text(stat.find('.//auth:RptgCtrPty/auth:Ntr/auth:FI/auth:Sctr/auth:Cd', NAMESPACES)),
+            'ReportingCounterparty_Threshold': get_text(stat.find('.//auth:RptgCtrPty/auth:Ntr/auth:FI/auth:ClrThrshld', NAMESPACES)),
+            'ReportingCounterparty_Side': get_text(stat.find('.//auth:RptgCtrPty/auth:DrctnOrSd/auth:CtrPtySd', NAMESPACES)),
+
+            'OtherCounterparty_ID': get_text(stat.find('.//auth:OthrCtrPty/auth:IdTp/auth:Ntrl/auth:Id/auth:Id/auth:Id', NAMESPACES)),
+            'OtherCounterparty_Country': get_text(stat.find('.//auth:OthrCtrPty/auth:IdTp/auth:Ntrl/auth:Ctry', NAMESPACES)),
+            'OtherCounterparty_ReportingObligation': get_text(stat.find('.//auth:OthrCtrPty/auth:RptgOblgtn', NAMESPACES)),
+
+            'SubmittingAgent_LEI': get_text(stat.find('.//auth:SubmitgAgt/auth:LEI', NAMESPACES)),
+            'ResponsibleEntity_LEI': get_text(stat.find('.//auth:NttyRspnsblForRpt/auth:LEI', NAMESPACES)),
+
+            # Valuation Data
+            'Valuation_Amount': get_text(stat.find('.//auth:Valtn/auth:CtrctVal/auth:Amt', NAMESPACES)),
+            'Valuation_Currency': stat.find('.//auth:Valtn/auth:CtrctVal/auth:Amt', NAMESPACES).get('Ccy') if stat.find('.//auth:Valtn/auth:CtrctVal/auth:Amt', NAMESPACES) is not None else None,
+            'Valuation_Timestamp': get_text(stat.find('.//auth:Valtn/auth:TmStmp', NAMESPACES)),
+            'Valuation_Type': get_text(stat.find('.//auth:Valtn/auth:Tp', NAMESPACES)),
+
+            'Reporting_Timestamp': get_text(stat.find('.//auth:RptgTmStmp', NAMESPACES)),
+
+            # Common Trade Data
+            'Contract_Type': get_text(stat.find('.//auth:CtrctData/auth:CtrctTp', NAMESPACES)),
+            'Asset_Class': get_text(stat.find('.//auth:CtrctData/auth:AsstClss', NAMESPACES)),
+            'Product_Classification': get_text(stat.find('.//auth:CtrctData/auth:PdctClssfctn', NAMESPACES)),
+            'Unique_Product_ID': get_text(stat.find('.//auth:CtrctData/auth:PdctId/auth:UnqPdctIdr/auth:Id', NAMESPACES)),
+            'Underlying_Instrument': get_text(stat.find('.//auth:CtrctData/auth:UndrlygInstrm/auth:ISIN', NAMESPACES)),
+            'Settlement_Currency': get_text(stat.find('.//auth:CtrctData/auth:SttlmCcy/auth:Ccy', NAMESPACES)),
+            'Derivative_Based_On_Crypto': get_text(stat.find('.//auth:CtrctData/auth:DerivBasedOnCrptAsst', NAMESPACES)),
+
+            # Transaction Data
+            'Transaction_Unique_ID': get_text(stat.find('.//auth:TxData/auth:TxId/auth:UnqTxIdr', NAMESPACES)),
+            'Collateral_Portfolio_Code': get_text(stat.find('.//auth:TxData/auth:CollPrtflCd/auth:Prtfl/auth:Cd', NAMESPACES)),
+            'Platform_ID': get_text(stat.find('.//auth:TxData/auth:PltfmIdr', NAMESPACES)),
+            'Transaction_Price': get_text(stat.find('.//auth:TxData/auth:TxPric/auth:Pric/auth:MntryVal/auth:Amt', NAMESPACES)),
+            'Transaction_Price_Currency': stat.find('.//auth:TxData/auth:TxPric/auth:Pric/auth:MntryVal/auth:Amt', NAMESPACES).get('Ccy') if stat.find('.//auth:TxData/auth:TxPric/auth:Pric/auth:MntryVal/auth:Amt', NAMESPACES) is not None else None,
+
+            'Notional_Amount': get_text(stat.find('.//auth:TxData/auth:NtnlAmt/auth:FrstLeg/auth:Amt/auth:Amt', NAMESPACES)),
+            'Notional_Quantity': get_text(stat.find('.//auth:TxData/auth:NtnlQty/auth:FrstLeg/auth:TtlQty', NAMESPACES)),
+            'Delivery_Type': get_text(stat.find('.//auth:TxData/auth:DlvryTp', NAMESPACES)),
+            'Execution_Timestamp': get_text(stat.find('.//auth:TxData/auth:ExctnTmStmp', NAMESPACES)),
+            'Effective_Date': get_text(stat.find('.//auth:TxData/auth:FctvDt', NAMESPACES)),
+
+            # Master Agreement
+            'Master_Agreement_Type': get_text(stat.find('.//auth:TxData/auth:MstrAgrmt/auth:Tp/auth:Tp', NAMESPACES)),
+            'Master_Agreement_Details': get_text(stat.find('.//auth:TxData/auth:MstrAgrmt/auth:OthrMstrAgrmtDtls', NAMESPACES)),
+
+            # Derivative Event
+            'Derivative_Event_Type': get_text(stat.find('.//auth:TxData/auth:DerivEvt/auth:Tp', NAMESPACES)),
+            'Derivative_Event_Timestamp': get_text(stat.find('.//auth:TxData/auth:DerivEvt/auth:TmStmp/auth:Dt', NAMESPACES)),
+
+            # Trade Confirmation
+            'Trade_Confirmation_Type': get_text(stat.find('.//auth:TxData/auth:TradConf/auth:Confd/auth:Tp', NAMESPACES)),
+            'Trade_Confirmation_Timestamp': get_text(stat.find('.//auth:TxData/auth:TradConf/auth:Confd/auth:TmStmp', NAMESPACES)),
+
+            # Trade Clearance
+            'Clearing_Obligation': get_text(stat.find('.//auth:TxData/auth:TradClr/auth:ClrOblgtn', NAMESPACES)),
+            'Clearing_Status_Reason': get_text(stat.find('.//auth:TxData/auth:TradClr/auth:ClrSts/auth:NonClrd/auth:Rsn', NAMESPACES)),
+            'Intragroup_Trade': get_text(stat.find('.//auth:TxData/auth:TradClr/auth:IntraGrp', NAMESPACES)),
+
+            # Contract Modifications
+            'Contract_Action_Type': get_text(stat.find('.//auth:TxData/auth:CtrctMod/auth:ActnTp', NAMESPACES)),
+            'Contract_Level': get_text(stat.find('.//auth:TxData/auth:CtrctMod/auth:Lvl', NAMESPACES)),
+
+            # Technical Attributes
+            'Reconciliation_Flag': get_text(stat.find('.//auth:TechAttrbts/auth:RcncltnFlg', NAMESPACES)),
+        }
+
+        yield data
+
+def insert_data_to_db(data, connection_string):
+    """Insert extracted data into the SQL Server database."""
+    query = '''
+    INSERT INTO trade_state_report (
+        ReportDate, ReportingCounterparty_LEI, ReportingCounterparty_Sector, ReportingCounterparty_Threshold, ReportingCounterparty_Side,
+        OtherCounterparty_ID, OtherCounterparty_Country, OtherCounterparty_ReportingObligation,
+        SubmittingAgent_LEI, ResponsibleEntity_LEI, Valuation_Amount, Valuation_Currency, Valuation_Timestamp,
+        Valuation_Type, Reporting_Timestamp, Contract_Type, Asset_Class, Product_Classification, Unique_Product_ID,
+        Underlying_Instrument, Settlement_Currency, Derivative_Based_On_Crypto, Transaction_Unique_ID, Collateral_Portfolio_Code,
+        Platform_ID, Transaction_Price, Transaction_Price_Currency, Notional_Amount, Notional_Quantity, Delivery_Type,
+        Execution_Timestamp, Effective_Date, Master_Agreement_Type, Master_Agreement_Details, Derivative_Event_Type,
+        Derivative_Event_Timestamp, Trade_Confirmation_Type, Trade_Confirmation_Timestamp, Clearing_Obligation,
+        Clearing_Status_Reason, Intragroup_Trade, Contract_Action_Type, Contract_Level, Reconciliation_Flag
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    '''
+
+    try:
+        with pyodbc.connect(connection_string) as conn:
+            cursor = conn.cursor()
+            batch_size = 500  # Example batch size
+            batch = []
+
+            for row in data:
+                batch.append((
+                    row['ReportDate'], row['ReportingCounterparty_LEI'], row['ReportingCounterparty_Sector'],
+                    row['ReportingCounterparty_Threshold'],
+                    row['ReportingCounterparty_Side'], row['OtherCounterparty_ID'], row['OtherCounterparty_Country'],
+                    row['OtherCounterparty_ReportingObligation'], row['SubmittingAgent_LEI'],
+                    row['ResponsibleEntity_LEI'],
+                    row['Valuation_Amount'], row['Valuation_Currency'], row['Valuation_Timestamp'],
+                    row['Valuation_Type'],
+                    row['Reporting_Timestamp'], row['Contract_Type'], row['Asset_Class'], row['Product_Classification'],
+                    row['Unique_Product_ID'], row['Underlying_Instrument'], row['Settlement_Currency'],
+                    row['Derivative_Based_On_Crypto'], row['Transaction_Unique_ID'], row['Collateral_Portfolio_Code'],
+                    row['Platform_ID'], row['Transaction_Price'], row['Transaction_Price_Currency'],
+                    row['Notional_Amount'],
+                    row['Notional_Quantity'], row['Delivery_Type'], row['Execution_Timestamp'], row['Effective_Date'],
+                    row['Master_Agreement_Type'], row['Master_Agreement_Details'], row['Derivative_Event_Type'],
+                    row['Derivative_Event_Timestamp'], row['Trade_Confirmation_Type'],
+                    row['Trade_Confirmation_Timestamp'],
+                    row['Clearing_Obligation'], row['Clearing_Status_Reason'], row['Intragroup_Trade'],
+                    row['Contract_Action_Type'], row['Contract_Level'], row['Reconciliation_Flag']
+                ))
+
+                # Commit in batches
+                if len(batch) == batch_size:
+                    cursor.executemany(query, batch)
+                    conn.commit()
+                    print(f"Committed {len(batch)} rows.")
+                    batch = []
+
+            # Commit any remaining rows
+            if batch:
+                cursor.executemany(query, batch)
+                conn.commit()
+                print(f"Committed {len(batch)} remaining rows.")
+
+            print("Data successfully inserted into the database.")
+    except pyodbc.Error as e:
+        print(f"Database error: {e}")
+
+if __name__ == "__main__":
+    try:
+        validate_xml(XML_FILE, XSD_FILE)
+        data = extract_data(XML_FILE)
+        insert_data_to_db(data, CONNECTION_STRING)
+    except Exception as e:
+        print(f"Error: {e}")
