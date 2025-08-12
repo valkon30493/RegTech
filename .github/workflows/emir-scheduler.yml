@@ -1,0 +1,87 @@
+name: EMIR Daily Ingest (Self-hosted)
+
+on:
+  schedule:
+    # Daily at ~05:30 Europe/Amsterdam with two spaced retries (UTC times below)
+    - cron: "30 3 * * *"
+    - cron: "40 3 * * *"
+    - cron: "50 3 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: emir-daily
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: [self-hosted, windows, emir]   # <-- match your runner labels
+    env:
+      SFTP_HOST: ${{ secrets.SFTP_HOST }}
+      SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
+      SQL_SERVER: ${{ secrets.SQL_SERVER }}
+      SQL_DB: ${{ secrets.SQL_DB }}
+      SFTP_REMOTE_DIR: /Outbound/FCAEmirRefit/
+      TIME_WINDOW_MIN: "90" # catch files arriving late
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # If Python/ODBC not preinstalled on the runner, uncomment:
+      # - name: Setup Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.11"
+      # - name: Install Python deps
+      #   run: pip install paramiko lxml pyodbc
+
+      - name: Write SFTP private key (temp)
+        shell: powershell
+        env:
+          PRIVATE_KEY: ${{ secrets.SFTP_PRIVATE_KEY_PEM }}
+        run: |
+          $keyPath = "$env:RUNNER_TEMP\cappitech_key.pem"
+          Set-Content -Path $keyPath -Value $env:PRIVATE_KEY -NoNewline
+          echo "KEY_PATH=$keyPath" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Run S030 loader
+        shell: powershell
+        run: |
+          python "RegTech\main\scripts\parse_s030.py" `
+            --sftp-host "$env:SFTP_HOST" --sftp-port 22 --sftp-username "$env:SFTP_USERNAME" `
+            --sftp-key "$env:KEY_PATH" --sftp-remote-dir "$env:SFTP_REMOTE_DIR" `
+            --file-pattern "_S030_" --file-suffix "EOS23.xml" `
+            --time-window-min "$env:TIME_WINDOW_MIN" `
+            --sql-server "$env:SQL_SERVER" --sql-db "$env:SQL_DB"
+
+      - name: Run S108 loader
+        shell: powershell
+        run: |
+          python "RegTech\main\scripts\parse_s108.py" `
+            --sftp-host "$env:SFTP_HOST" --sftp-port 22 --sftp-username "$env:SFTP_USERNAME" `
+            --sftp-key "$env:KEY_PATH" --sftp-remote-dir "$env:SFTP_REMOTE_DIR" `
+            --file-pattern "_S108_" --file-suffix "EOS23.xml" `
+            --time-window-min "$env:TIME_WINDOW_MIN" `
+            --sql-server "$env:SQL_SERVER" --sql-db "$env:SQL_DB"
+
+      - name: Run S030 I092 loader
+        shell: powershell
+        run: |
+          python "RegTech\main\scripts\parse_i092.py" `
+            --report-type "S030" `
+            --sftp-host "$env:SFTP_HOST" --sftp-port 22 --sftp-username "$env:SFTP_USERNAME" `
+            --sftp-key "$env:KEY_PATH" --sftp-remote-dir "$env:SFTP_REMOTE_DIR" `
+            --patterns "_S030_I092_" --suffixes "EOS23.I092.1.xml" `
+            --time-window-min "$env:TIME_WINDOW_MIN" `
+            --sql-server "$env:SQL_SERVER" --sql-db "$env:SQL_DB"
+
+      - name: Run S108 I092 loader
+        shell: powershell
+        run: |
+          python "RegTech\main\scripts\parse_i092.py" `
+            --report-type "S108" `
+            --sftp-host "$env:SFTP_HOST" --sftp-port 22 --sftp-username "$env:SFTP_USERNAME" `
+            --sftp-key "$env:KEY_PATH" --sftp-remote-dir "$env:SFTP_REMOTE_DIR" `
+            --patterns "_S108_I092_" --suffixes "EOS23.I092.1.xml" `
+            --time-window-min "$env:TIME_WINDOW_MIN" `
+            --sql-server "$env:SQL_SERVER" --sql-db "$env:SQL_DB"
